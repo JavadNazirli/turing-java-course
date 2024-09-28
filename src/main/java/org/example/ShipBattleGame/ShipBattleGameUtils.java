@@ -4,23 +4,29 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class ShipBattleGameUtils {
-    public int[][] gameFieldCreater(){
+    public char[][] gameFieldCreater() {
         Random random = new Random();
-        int[][] gameField = new int[7][7];
+        char[][] gameField = new char[7][7];
+        for (int i = 0; i < gameField.length; i++) {
+            for (int j = 0; j < gameField[0].length; j++) {
+                gameField[i][j] = '0';
+            }
+        }
         int shipCount = 0;
 
         while (shipCount < 7) {
             int i = random.nextInt(7);
             int j = random.nextInt(7);
 
-            if (gameField[i][j] == 0) {
-                gameField[i][j] = 1;
+            if (gameField[i][j] == '0') {
+                gameField[i][j] = '1';
                 shipCount++;
             }
         }
         return gameField;
     }
-    public void printGameField(int[][] gameField){
+
+    public void printGameField(char[][] gameField) {
         for (int k = 0; k < gameField.length; k++) {
             for (int m = 0; m < gameField[0].length; m++) {
                 System.out.print(gameField[k][m] + "  ");
@@ -28,7 +34,8 @@ public class ShipBattleGameUtils {
             System.out.println();
         }
     }
-    public void printInfo(){
+
+    public void printInfo() {
         System.out.println("------------------------- Game info -------------------------");
         System.out.println("Welcome to the ship battle game!\n" +
                 "The game conditions are as follows:\n" +
@@ -41,14 +48,14 @@ public class ShipBattleGameUtils {
                 "Good luck!!");
         System.out.println("--------------------------------------------------");
     }
-    public void menu(){
+
+    public void menu() {
         System.out.print("Enter username: ");
         Scanner scanner = new Scanner(System.in);
         String userName = scanner.nextLine();
-        System.out.println("Welcome "+userName+" :)");
+        System.out.println("Welcome " + userName + " :)");
         System.out.println("-----");
-
-        int[][] gameField = gameFieldCreater();
+        char[][] gameField = gameFieldCreater();
         int iterator = 7;
         int coordinateY = 0;
         int coordinateX = 0;
@@ -60,24 +67,39 @@ public class ShipBattleGameUtils {
             coordinateX = scanner.nextInt();
             System.out.print("Enter coordinate y (vertical) :");
             coordinateY = scanner.nextInt();
-            try {
-                if (gameField[coordinateX-1][coordinateY-1] == 1) {
+            if (isInputValid(coordinateX, coordinateY)) {
+                if (gameField[coordinateX - 1][coordinateY - 1] == '1') {
                     score++;
                     System.out.println("YOU SUNK THE SHIP!\n------------------");
-                    gameField[coordinateX-1][coordinateY-1] = 2;
+                    gameField[coordinateX - 1][coordinateY - 1] = 'X';
                 } else {
                     System.out.println("MISS!\n------------------");
                 }
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } else {
                 System.out.println("PLEASE ENTER AVAILABLE COORDINATE!!!");
                 iterator++;
             }
         }
-        System.out.println("\n---------------------------\nCongratulation "+userName+"!!. Your score: "+score+"\n---------------------");
+        System.out.println("\n---------------------------\nCongratulation " + userName + "!!. Your score: " + score + "\n---------------------");
         printGameField(gameField);
     }
-    public void startGame(){
+
+    public void startGame() {
+        Scanner scanner = new Scanner(System.in);
+        char answer;
         printInfo();
-        menu();
+        do {
+
+            menu();
+            System.out.println("-----------------------\nDo you want to try again?\n if you want type -> Y // if you don't want to play again type any button except 'Y'");
+            answer = scanner.nextLine().toLowerCase().charAt(0);
+        } while (answer == 'y');
+    }
+
+    public boolean isInputValid(int coordinateX, int coordinateY) {
+        if ((coordinateX > 0 && coordinateX < 8) && (coordinateY > 0 && coordinateY < 8)) {
+            return true;
+        }
+        return false;
     }
 }
